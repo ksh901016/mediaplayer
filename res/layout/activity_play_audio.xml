@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:orientation="vertical"
+ android:layout_width="fill_parent"
+ android:layout_height="fill_parent"
+ >
+ <TextView
+  android:id="@+id/filename"  
+  android:layout_width="fill_parent" 
+  android:layout_height="wrap_content" 
+  android:textSize="15sp"
+  android:textColor="#99FFE400"
+  android:background="#000000"
+  android:gravity="center_horizontal"
+  android:text="now playing : "
+  android:layout_marginTop="10dip"
+  android:layout_marginBottom="10dip"
+  />
+ <LinearLayout
+  android:orientation="horizontal"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  >
+ <Button
+  android:id="@+id/play"  
+  android:layout_width="match_parent" 
+  android:layout_height="wrap_content"
+  android:layout_weight="1" 
+  android:text="▶"
+  />
+ <Button
+  android:id="@+id/stop"  
+  android:layout_width="match_parent" 
+  android:layout_height="wrap_content" 
+  android:layout_weight="1" 
+  android:text="■"
+  />
+ <Button
+  android:id="@+id/previous"  
+  android:layout_width="match_parent" 
+  android:layout_height="wrap_content" 
+  android:layout_weight="1" 
+  android:text="◁◁"
+  />
+ <Button
+  android:id="@+id/next"  
+  android:layout_width="match_parent" 
+  android:layout_height="wrap_content" 
+  android:layout_weight="1" 
+  android:text="▷▷"
+  />
+ </LinearLayout>
+ <SeekBar 
+  android:id="@+id/progress"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:max="100"
+  android:progress="0"
+  android:padding="10dip"
+  />
+ 
+ <TextView 
+  android:layout_width="fill_parent" 
+  android:layout_height="wrap_content" 
+  android:textSize="15sp"
+  android:textColor="#99FFE400"
+  android:background="#000000"
+  android:gravity="center_horizontal"
+  android:text="재생 목록"
+  android:layout_marginTop="10dip"
+  android:layout_marginBottom="10dip"
+  />
+
+ <ListView
+     android:id="@+id/mp3_list"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content" >
+ </ListView>
+
+</LinearLayout>
+
