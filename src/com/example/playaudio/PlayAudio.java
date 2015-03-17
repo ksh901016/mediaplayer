@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import android.app.*;
+import android.content.*;
 import android.media.*;
 import android.os.*;
 import android.util.*;
@@ -12,8 +13,6 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.example.playaudio.ListView.MyListAdapter;
-
 
 public class PlayAudio extends Activity {
 	Button play,stop,previous,next; //player 기능 버튼
@@ -21,14 +20,13 @@ public class PlayAudio extends Activity {
 	SeekBar mp3SeekBar; //mp3 진행바
 	String sdPath; //sd카드 경로
 	File sdDir; //sd카드 디렉토리폴더
-	ArrayList<String> mp3List; //sd카드의 mp3파일 목록
+	ArrayList<MyItem> mp3List; //sd카드의 mp3파일 목록
 	int position; //mp3 파일 재생위치
 	ListView mp3ListView; //재생 전체 목록을 보여줄 ListView
-	
+	MyListAdapter mp3ListViewAdapter;
 	MediaPlayer mediaPlayer;
 	boolean isPlaying;
-	ListView listview = new ListView();
-	listview.MyListAdapter mp3ListViewAdapter; //mp3 ListView의 Adapter
+	
 	
 	//mp3 한곡이 재생되는 위치를 0.1 초마다 받아와서 progessBar의 진행위치를 갱신
 	Handler handler = new Handler(){
@@ -49,7 +47,6 @@ public class PlayAudio extends Activity {
 			mediaPlayer = null;
 		}
 	}
-	
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +86,17 @@ public class PlayAudio extends Activity {
 			finish();
 			return;
 		}
-		mp3List = new ArrayList<String>();
+		mp3List = new ArrayList<MyItem>();
+		MyItem mi;
 		for(String s: mplist){
-			mp3List.add(sdPath+"/"+s);
+			mi = new MyItem(R.drawable.ic_launcher,sdPath + "/" + s);
+			mp3List.add(mi);
+		
 		}
 		position = 0;
 		
 		// 5.mp3 파일 목록을 나타낼 ListView 설정
-		mp3ListViewAdapter = new MyListAdapter<String>(this, android.R.layout.simple_list_item_1,mp3List);
+		mp3ListViewAdapter = new MyListAdapter(this, R.layout.view, mp3List);
 		mp3ListView.setAdapter(mp3ListViewAdapter);
 		
 		//6. mediaPlayer 설정
@@ -250,17 +250,93 @@ public class PlayAudio extends Activity {
 	                }
 	            }
 	        });
+		 
+		 mp3ListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+			}
+		});
+    }
+    //리스트뷰에 출력할 항목
+    class MyItem{
+    	MyItem(int aIcon, String aName){
+    		Icon = aIcon;
+    		Name = aName;
+    	}
+    	int Icon;
+    	String Name;
     }
     
     
+    //어댑터 클래스
     
+    class MyListAdapter extends BaseAdapter{
+    	Context maincon;
+    	LayoutInflater Inflater;
+    	ArrayList<MyItem> arSrc;
+    	int layout;
+    	
+    	public MyListAdapter(Context context, int alayout, ArrayList<MyItem> aarSrc){
+    		maincon = context;
+    		Inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    		arSrc = aarSrc;
+    		layout = alayout;
+    	}
+    	
+		@Override
+		public int getCount() { //getCount 메서드는 어댑터에 몇 개의 항목이 있는지 조사
+			return arSrc.size();
+		}
+
+		@Override
+		public Object getItem(int position) { //getItem position 위치의 항목을 조사하는데 배열의 position 번째 요소 리턴
+			return arSrc.get(position).Name;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		//각 항목의 뷰 생성
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) { //항목 하나를 출력하기 위한 뷰를 생성하여 리턴
+			final int pos = position;
+			if(convertView ==null){
+				convertView = Inflater.inflate(layout, parent,false);
+			}
+			ImageView img = (ImageView) convertView.findViewById(R.id.img);
+			img.setImageResource(arSrc.get(position).Icon);
+			
+			TextView txt = (TextView) convertView.findViewById(R.id.text);
+			txt.setText(arSrc.get(position).Name);
+			
+			Button btn = (Button) convertView.findViewById(R.id.btn);
+			btn.setOnClickListener(new Button.OnClickListener(){
+				public void onClick(View v){
+					String str =  arSrc.get(pos).Name +"를 삭제합니다.";
+					Toast.makeText(maincon, str, Toast.LENGTH_SHORT).show();
+				}
+				
+			});
+			
+			
+			return convertView;
+		}
+		
+
+    }
+
 		/****************재생목록에서 mp3 파일 플레이어에 로딩하는 메소드 *************/
 		
 		private void setDataSourcePrepare(int position){
 			try {
-				mediaPlayer.setDataSource(mp3List.get(position));
+				mediaPlayer.setDataSource(mp3List.get(position).Name);
 				mediaPlayer.prepare();
-				mp3Filename.setText("now playing : "+ mp3List.get(position));
+				mp3Filename.setText("now playing : "+ mp3List.get(position).Name);
 				mp3SeekBar.setMax(mediaPlayer.getDuration());
 			} catch (Exception e) {
 				Log.v("player", e.getMessage()+"재생목록 mp3파일 셋팅 실패!");

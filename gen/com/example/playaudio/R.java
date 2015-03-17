@@ -39,7 +39,7 @@ public final class R {
     }
     public static final class layout {
         public static final int activity_play_audio=0x7f030000;
-        public static final int mp3listview=0x7f030001;
+        public static final int view=0x7f030001;
     }
     public static final class menu {
         public static final int play_audio=0x7f070000;
